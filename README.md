@@ -1,4 +1,4 @@
-````md id="infiniedit-readme"
+
 <div align="center">
 
 # ✨ InfiniEdit
@@ -263,4 +263,3 @@ or
 Made with ❤️ for the Infinite Craft community.
 
 </div>
-````
