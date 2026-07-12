@@ -20,7 +20,6 @@ Fast • Powerful • Offline • Open Source
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white">
   <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white">
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black">
-  <img src="https://img.shields.io/badge/Offline-Ready-success?style=flat-square">
   <img src="https://img.shields.io/badge/Responsive-Yes-blue?style=flat-square">
   <img src="https://img.shields.io/badge/Dark_Mode-Yes-8A2BE2?style=flat-square">
   <img src="https://img.shields.io/badge/Zero_Dependencies-✔-orange?style=flat-square">
