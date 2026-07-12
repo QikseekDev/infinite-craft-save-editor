@@ -529,6 +529,7 @@ td.actions-cell{display:flex;gap:4px;width:1%;}
     <button class="tbtn" id="btn-compare" title="Compare with another save">⇄ Compare</button>
     <button class="tbtn" id="btn-backups" title="Backups">🗂 Backups</button>
     <button class="tbtn" id="btn-import-recipes" title="Paste recipes like 'A + B = C'">📋 Import Recipes</button>
+    <button class="tbtn" id="btn-api-lookup" title="Look up element on InfiniBrowser">🔍 API Lookup</button>
     <div class="spacer"></div>
     <span class="savename" id="savename-display">No save loaded</span>
     <button class="tbtn" id="btn-darkmode" title="Toggle theme">🌙</button>
@@ -2310,6 +2311,150 @@ document.getElementById("graph-relayout").onclick = ()=>{
 };
 
 /* =========================================================================
+   API LOOKUP: Fetch recipes from infinibrowser.wiki
+   ========================================================================= */
+async function openApiLookupModal(){
+  openModal({
+    title: "Look Up Element on InfiniBrowser",
+    bodyHtml: `
+      <p class="small muted">⚠️ This uses infinibrowser.wiki's undocumented API. It's not guaranteed to be stable.</p>
+      <label class="field-label">Element name</label>
+      <input class="field-input" id="api-lookup-input" placeholder="e.g. Geyser, Volcano, Lava" autocomplete="off">
+      <div id="api-lookup-result" style="margin-top:14px;"></div>
+    `,
+    footerButtons: [
+      {label:"Close", onClick: closeModal}
+    ],
+    onMount: (overlay)=>{
+      const input = overlay.querySelector("#api-lookup-input");
+      const resultArea = overlay.querySelector("#api-lookup-result");
+      input.focus();
+      input.addEventListener("keyup", async (e)=>{
+        if(e.key !== "Enter") return;
+        const name = input.value.trim();
+        if(!name){ resultArea.innerHTML = '<div class="small muted">Type an element name and press Enter.</div>'; return; }
+        resultArea.innerHTML = '<div class="small muted">Fetching...</div>';
+        if(!state.save){
+          resultArea.innerHTML = '<div class="small" style="color:var(--danger);">⚠️ Open or create a save file first before importing recipes.</div>';
+          return;
+        }
+        try{
+          const proxyUrl = `https://cors.qikseek.qzz.io/?url=${encodeURIComponent(`https://infinibrowser.wiki/api/Recipe?id=${encodeURIComponent(name)}`)}`;
+          const resp = await fetch(proxyUrl);
+          if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const wrapper = await resp.json();
+          
+          // cors.qikseek wraps response in {contents: "..."}
+          let data;
+          if(wrapper.contents){
+            data = JSON.parse(wrapper.contents);
+          } else {
+            data = wrapper;
+          }
+          
+          if(!data.steps || data.steps.length===0){
+            resultArea.innerHTML = '<div class="small muted">No recipe found for that element.</div>';
+            return;
+          }
+          displayApiRecipePreview(data, overlay);
+        }catch(err){
+          console.error('API error:', err);
+          resultArea.innerHTML = `<div class="small" style="color:var(--danger);">Error: ${err.message}<br><br><span class="small muted">Proxy might be down or element doesn't exist.</span></div>`;
+        }
+      });
+    }
+  });
+}
+
+function displayApiRecipePreview(data, overlay){
+  const resultArea = overlay.querySelector("#api-lookup-result");
+  const {steps, missing} = data;
+  const plan = planApiRecipeImport(steps);
+  
+  resultArea.innerHTML = `
+    <div class="stat-grid" style="margin-bottom:12px;">
+      <div class="stat-card"><div class="num">${plan.newElements.length}</div><div class="lbl">New elements</div></div>
+      <div class="stat-card"><div class="num">${plan.recipeActions.length}</div><div class="lbl">Recipes to add</div></div>
+      <div class="stat-card ${plan.dupSkipped.length?'warn':''}"><div class="num">${plan.dupSkipped.length}</div><div class="lbl">Already exist</div></div>
+    </div>
+    ${plan.newElements.length ? `
+      <div class="small" style="margin-bottom:4px;font-weight:700;color:var(--text-1);">New elements</div>
+      <div class="stat-list" style="margin-bottom:12px;">
+        ${plan.newElements.map(ne=>`<div class="stat-list-row"><span class="k">${escapeHtml(ne.emoji)} ${escapeHtml(ne.text)}</span><span class="v muted">new</span></div>`).join("")}
+      </div>` : ""}
+    <div class="small" style="margin-bottom:4px;font-weight:700;color:var(--text-1);">Recipe chain</div>
+    <div class="stat-list" style="margin-bottom:12px;max-height:200px;overflow-y:auto;">
+      ${steps.map((step,i)=>`
+        <div class="stat-list-row" style="font-size:11.5px;">
+          <span class="k">${escapeHtml(step.a.emoji)} ${escapeHtml(step.a.id)}</span>
+          <span style="color:var(--text-2);">+</span>
+          <span class="k">${escapeHtml(step.b.emoji)} ${escapeHtml(step.b.id)}</span>
+          <span style="color:var(--text-2);">→</span>
+          <span class="k" style="color:var(--accent)">${escapeHtml(step.result.emoji)} ${escapeHtml(step.result.id)}</span>
+        </div>
+      `).join("")}
+    </div>
+    <button class="tbtn primary" id="api-import-btn" style="width:100%;margin-top:8px;">Import all recipes</button>
+  `;
+  overlay.querySelector("#api-import-btn").onclick = ()=>{
+    applyApiRecipeImport(plan);
+    closeModal();
+    toast(`Imported ${plan.recipeActions.length} recipe(s) from InfiniBrowser`, "success");
+  };
+}
+
+function planApiRecipeImport(steps){
+  const byNameLower = new Map(state.save.items.map(it=>[it.text.trim().toLowerCase(), it]));
+  const newPending = new Map();
+  let nextId = nextFreeId(state.save);
+
+  function resolve(obj){
+    // obj has {id: name, emoji}
+    const key = obj.id.trim().toLowerCase();
+    if(byNameLower.has(key)) return {existing: true, id: byNameLower.get(key).id, text: byNameLower.get(key).text};
+    if(newPending.has(key)) return {existing: false, id: newPending.get(key).plannedId, text: newPending.get(key).text};
+    const plannedId = nextId++;
+    newPending.set(key, {text: obj.id, emoji: obj.emoji, plannedId});
+    return {existing: false, id: plannedId, text: obj.id};
+  }
+
+  const recipeActions = [];
+  const dupSkipped = [];
+  for(const step of steps){
+    const aRes = resolve(step.a);
+    const bRes = resolve(step.b);
+    const rRes = resolve(step.result);
+    
+    let alreadyExists = false;
+    if(byNameLower.has(step.result.id.trim().toLowerCase())){
+      const resultItem = byNameLower.get(step.result.id.trim().toLowerCase());
+      const key = [aRes.id, bRes.id].slice().sort((x,y)=>x-y).join(",");
+      alreadyExists = (resultItem.recipes||[]).some(r => [...r].sort((x,y)=>x-y).join(",") === key);
+    }
+    if(alreadyExists){ dupSkipped.push(step); continue; }
+    recipeActions.push({ a: aRes.id, b: bRes.id, resultId: rRes.id, step });
+  }
+
+  return { newElements: [...newPending.values()], recipeActions, dupSkipped };
+}
+
+function applyApiRecipeImport(plan){
+  pushHistory();
+  for(const ne of plan.newElements){
+    state.save.items.push({ id: ne.plannedId, text: ne.text, emoji: ne.emoji, recipes: [] });
+  }
+  const byId = itemsById(state.save);
+  for(const action of plan.recipeActions){
+    const resultItem = byId.get(action.resultId);
+    if(!resultItem) continue;
+    if(!resultItem.recipes) resultItem.recipes = [];
+    resultItem.recipes.push([action.a, action.b]);
+  }
+  commit();
+  fullRender();
+}
+
+/* =========================================================================
    PASTE-TO-IMPORT RECIPES
    Parses lines like "Earth + Water = Plant" and, for each line:
      - finds or creates each named element (by case-insensitive name match)
@@ -2662,6 +2807,7 @@ document.getElementById("btn-merge").addEventListener("click", openMergeModal);
 document.getElementById("btn-compare").addEventListener("click", openCompareModal);
 document.getElementById("btn-backups").addEventListener("click", openBackupsModal);
 document.getElementById("btn-import-recipes").addEventListener("click", openImportRecipesModal);
+document.getElementById("btn-api-lookup").addEventListener("click", openApiLookupModal);
 document.getElementById("btn-darkmode").addEventListener("click", ()=>{
   state.darkmode = !state.darkmode;
   applyTheme();
