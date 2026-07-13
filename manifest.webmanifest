@@ -1,0 +1,19 @@
+{
+  "name": "InfiniEdit",
+  "short_name": "InfiniEdit",
+  "description": "A browser-based Infinite Craft save editor for editing, analyzing, and visualizing .ic save files, with live recipe lookups.",
+  "start_url": "https://infiniedit.qzz.io",
+  "id": "https://infiniedit.qzz.io",
+  "display": "standalone",
+  "background_color": "#0a0d15",
+  "theme_color": "#8A2BE2",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
