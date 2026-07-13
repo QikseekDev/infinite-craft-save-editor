@@ -148,7 +148,7 @@ Fast • Powerful • Open Source
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/InfiniEdit.git
+git clone https://github.com/QikSeekDev/InfiniEdit.git
 ```
 
 Or simply download the project and open:
