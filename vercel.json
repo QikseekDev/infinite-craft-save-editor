@@ -1,11 +1,11 @@
 {
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/",
       "headers": [
         {
           "key": "Link",
-          "value": "</api-catalog>; rel=\"api-catalog\", </docs/api>; rel=\"service-doc\""
+          "value": "</index.html>; rel=\"service-doc\", <https://github.com/yourusername/infiniedit>; rel=\"documentation\""
         }
       ]
     }
