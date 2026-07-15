@@ -5,7 +5,25 @@
       "headers": [
         {
           "key": "Link",
-          "value": "</index.html>; rel=\"service-doc\", <https://github.com/yourusername/infiniedit>; rel=\"documentation\""
+          "value": "</index.html>; rel=\"service-doc\", <https://github.com/QikSeekDev/InfiniEdit>; rel=\"documentation\""
+        }
+      ]
+    },
+    {
+      "source": "/.well-known/api-catalog",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/linkset+json"
+        }
+      ]
+    },
+    {
+      "source": "/.well-known/(.*)\\.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
         }
       ]
     }
