@@ -1,0 +1,31 @@
+{
+  "$schema": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127",
+  "serverInfo": {
+    "name": "InfiniEdit",
+    "version": "1.0.0",
+    "description": "Infinite Craft save editor exposing element and recipe management tools to browser-based AI agents via WebMCP."
+  },
+  "transport": {
+    "type": "webmcp",
+    "note": "This server is not a standalone remote MCP endpoint. Tools are registered client-side via navigator.modelContext.provideContext() when infiniedit.qzz.io is loaded in a WebMCP-capable browser."
+  },
+  "capabilities": {
+    "tools": {
+      "list_changed": false,
+      "call": true
+    }
+  },
+  "tools": [
+    "list_elements",
+    "get_element",
+    "add_element",
+    "edit_element",
+    "delete_element",
+    "add_recipe",
+    "dedupe_elements",
+    "get_save_stats",
+    "undo",
+    "redo",
+    "export_save"
+  ]
+}
