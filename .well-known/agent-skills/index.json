@@ -1,0 +1,33 @@
+{
+  "$schema": "https://agentskills.io/schema/0.2.0",
+  "skills": [
+    {
+      "name": "infiniedit-element-manager",
+      "type": "tool",
+      "description": "Add, edit, delete, and search elements in an Infinite Craft save file, directly in the browser via WebMCP.",
+      "url": "https://infiniedit.qzz.io/",
+      "sha256": ""
+    },
+    {
+      "name": "infiniedit-recipe-manager",
+      "type": "tool",
+      "description": "Create crafting recipes linking ingredient elements to a result element in an Infinite Craft save.",
+      "url": "https://infiniedit.qzz.io/",
+      "sha256": ""
+    },
+    {
+      "name": "infiniedit-save-analysis",
+      "type": "tool",
+      "description": "Get statistics on an Infinite Craft save: element/recipe counts, duplicates, unreachable elements, and dead ends.",
+      "url": "https://infiniedit.qzz.io/",
+      "sha256": ""
+    },
+    {
+      "name": "infiniedit-dedupe",
+      "type": "tool",
+      "description": "Find and merge exact-duplicate elements (same name and emoji) in an Infinite Craft save.",
+      "url": "https://infiniedit.qzz.io/",
+      "sha256": ""
+    }
+  ]
+}
