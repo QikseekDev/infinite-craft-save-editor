@@ -1,0 +1,19 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://infiniedit.qzz.io/",
+      "links": [
+        {
+          "rel": "service-doc",
+          "href": "https://github.com/QikSeekDev/InfiniEdit#readme",
+          "title": "InfiniEdit README and feature documentation"
+        },
+        {
+          "rel": "status",
+          "href": "https://infiniedit.qzz.io/",
+          "title": "InfiniEdit homepage (live status)"
+        }
+      ]
+    }
+  ]
+}
