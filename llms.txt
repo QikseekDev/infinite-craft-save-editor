@@ -1,20 +1,17 @@
 # InfiniEdit
 
-> Browser-based save editor for the game Infinite Craft. Single-page, client-side only, vanilla HTML/CSS/JS with no backend, no build step, and no dependencies for the core app. Unofficial fan project, not affiliated with Infinite Craft or its creators.
+> Browser-based, client-side save editor for the game Infinite Craft. Open, edit, analyze, and export `.ic` save files â€” elements, recipes, dependency graph â€” entirely in the browser, with optional live recipe lookups. Unofficial fan project, not affiliated with Infinite Craft or its creators.
 
-InfiniEdit opens `.ic` Infinite Craft save files and lets a user edit elements and recipes, analyze the save (duplicates, dead ends, missing dependencies), visualize the recipe dependency tree as an interactive graph, and export the result. All processing happens locally in the browser; no save data is uploaded to any server. Optional live recipe lookups are made against the third-party InfiniBrowser API for autocomplete and auto-fill.
+InfiniEdit is a single-file, no-build, no-framework HTML/CSS/JS app. There is no backend for core functionality: no accounts, no analytics, no server-side storage of save data. It also exposes its editing actions as WebMCP tools (`document.modelContext` / `navigator.modelContext`) so an in-browser AI agent can inspect and edit the loaded save directly â€” call `get_save_summary` first, then `search_elements` / `get_element` to look things up, and `add_element` / `add_recipe` / `delete_element` / `export_save` to make changes.
 
 ## Docs
 
-- [Full documentation (Markdown, machine-readable)](https://infiniedit.qzz.io/): served when `Accept: text/markdown` is sent to `/`; internally rewritten to `/api/root`. Covers data model, local storage keys, external API calls, full feature list, and keyboard shortcuts.
-- [Human README](https://github.com/QikSeekDev/InfiniEdit/blob/main/README.md): marketing-style overview with badges and feature tables.
-
-## App
-
-- [Live app (primary)](https://infiniedit.qzz.io)
-- [Live app (mirror)](https://infiniedit.vercel.app)
-- [Source code](https://github.com/QikSeekDev/InfiniEdit)
+- [Full AI-oriented reference](https://infiniedit.qzz.io/): request with `Accept: text/markdown` for a complete Markdown doc covering data model, localStorage keys, external API calls, feature list, keyboard shortcuts, and the full WebMCP tool schema (inputs/outputs) â€” same URL, content-negotiated, URL bar unchanged.
+- [Source code](https://github.com/QikSeekDev/InfiniEdit): full client implementation, single `index.html`.
+- [Issues / contribution](https://github.com/QikSeekDev/InfiniEdit/issues): bug reports and pull requests.
 
 ## Optional
 
-- [Issues / feature requests](https://github.com/QikSeekDev/InfiniEdit/issues)
+- [Mirror](https://infiniedit.vercel.app): identical app, alternate deployment.
+- [InfiniBrowser API](https://infinibrowser.wiki/api/Recipe?id=example): third-party recipe database InfiniEdit optionally queries for autocomplete and missing-recipe lookups (element names only, no save data sent).
+- [WebMCP spec](https://webmachinelearning.github.io/webmcp/): the in-browser tool-calling standard InfiniEdit's AI tools are built on.
