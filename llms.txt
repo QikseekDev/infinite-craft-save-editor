@@ -1,12 +1,13 @@
 # InfiniEdit
 
-> Browser-based, client-side save editor for the game Infinite Craft. Open, edit, analyze, and export `.ic` save files â€” elements, recipes, dependency graph â€” entirely in the browser, with optional live recipe lookups. Unofficial fan project, not affiliated with Infinite Craft or its creators.
+> InfiniEdit is a free software tool: a browser-based save-file editor for the sandbox crafting game Infinite Craft. It is a developer utility, not a game — it opens, edits, analyzes, and visualizes `.ic` save files. Unofficial fan project, not affiliated with Infinite Craft or its creators.
 
-InfiniEdit is a single-file, no-build, no-framework HTML/CSS/JS app. There is no backend for core functionality: no accounts, no analytics, no server-side storage of save data. It also exposes its editing actions as WebMCP tools (`document.modelContext` / `navigator.modelContext`) so an in-browser AI agent can inspect and edit the loaded save directly â€” call `get_save_summary` first, then `search_elements` / `get_element` to look things up, and `add_element` / `add_recipe` / `delete_element` / `export_save` to make changes.
+InfiniEdit is a single-file, no-build, no-framework HTML/CSS/JS web application. All core functionality runs client-side in the browser: no accounts, no analytics, no server-side storage of save data, nothing to install. It also exposes its editing actions as WebMCP tools (`document.modelContext` / `navigator.modelContext`) so an in-browser AI agent can inspect and edit the loaded save directly — call `get_save_summary` first, then `search_elements` / `get_element` to look things up, and `add_element` / `add_recipe` / `delete_element` / `export_save` to make changes.
 
 ## Docs
 
-- [Full AI-oriented reference](https://infiniedit.qzz.io/): request with `Accept: text/markdown` for a complete Markdown doc covering data model, localStorage keys, external API calls, feature list, keyboard shortcuts, and the full WebMCP tool schema (inputs/outputs) â€” same URL, content-negotiated, URL bar unchanged.
+- [Full reference](https://infiniedit.qzz.io/llms-full.txt): complete technical reference covering the data model, localStorage keys, external API calls, full feature list, keyboard shortcuts, and the full WebMCP tool schema (inputs/outputs).
+- [Homepage](https://infiniedit.qzz.io/): the live application. Requesting it with an `Accept: text/markdown` header returns the same content as llms-full.txt via content negotiation, at the same URL.
 - [Source code](https://github.com/QikSeekDev/InfiniEdit): full client implementation, single `index.html`.
 - [Issues / contribution](https://github.com/QikSeekDev/InfiniEdit/issues): bug reports and pull requests.
 
